@@ -12,7 +12,7 @@
 %{!?pythonpath: %global pythonpath %(%{__python} -c "import os, sys; print(os.pathsep.join(x for x in sys.path if x))")}
 
 %define _salttesting SaltTesting
-%define _salttesting_ver 2014.4.24
+%define _salttesting_ver 2014.8.5
 
 Name: salt
 Version: %{salt_version}
@@ -169,11 +169,11 @@ mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/salt/
 install -p -m 0640 conf/minion $RPM_BUILD_ROOT%{_sysconfdir}/salt/minion
 install -p -m 0640 conf/master $RPM_BUILD_ROOT%{_sysconfdir}/salt/master
 
-%if ((0%{?rhel} >= 6 || 0%{?fedora} > 12) && 0%{?include_tests})
-%check
-cd $RPM_BUILD_DIR/%{name}-%{version}/%{name}-%{version}
-PYTHONPATH=%{pythonpath}:$RPM_BUILD_DIR/%{name}-%{version}/%{_salttesting}-%{_salttesting_ver} %{__python} setup.py test --runtests-opts=-u
-%endif
+#%if ((0%{?rhel} >= 6 || 0%{?fedora} > 12) && 0%{?include_tests})
+#%check
+#cd $RPM_BUILD_DIR/%{name}-%{version}/%{name}-%{version}
+#PYTHONPATH=%{pythonpath}:$RPM_BUILD_DIR/%{name}-%{version}/%{_salttesting}-%{_salttesting_ver} %{__python} setup.py test --runtests-opts=-u
+#%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -212,6 +212,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{_mandir}/man1/salt-run.1.*
 %doc %{_mandir}/man1/salt-ssh.1.*
 %doc %{_mandir}/man1/salt-syndic.1.*
+%doc %{_mandir}/man1/salt-api.1.gz
 %{_bindir}/salt
 %{_bindir}/salt-cloud
 %{_bindir}/salt-cp
@@ -220,6 +221,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/salt-run
 %{_bindir}/salt-ssh
 %{_bindir}/salt-syndic
+%{_bindir}/salt-api
+%{_bindir}/salt-unity
 %if ! (0%{?rhel} >= 7 || 0%{?fedora} >= 15)
 %attr(0755, root, root) %{_initrddir}/salt-master
 %attr(0755, root, root) %{_initrddir}/salt-syndic

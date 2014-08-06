@@ -548,4 +548,5 @@ def versions_report(include_salt_cloud=False):
 
 
 if __name__ == '__main__':
+    __version__ = '2014.7.0'
     print(__version__)
