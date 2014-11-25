@@ -14,7 +14,9 @@ ensure_in_syspath('../../')
 # Import salt libs
 import integration
 import salt.utils
+from salt.modules import cmdmod
 
+cmdmod.__salt__ = {}
 
 AVAILABLE_PYTHON_EXECUTABLE = salt.utils.which_bin([
     'python',
@@ -30,7 +32,7 @@ class CMDModuleTest(integration.ModuleCase):
     '''
     Validate the cmd module
     '''
-    def test_run(self):
+    def _run(self):
         '''
         cmd.run
         '''
@@ -45,6 +47,15 @@ class CMDModuleTest(integration.ModuleCase):
                               ['echo $SHELL',
                                'shell={0}'.format(shell)]).rstrip(),
             shell)
+
+    def test_run(self):
+        self._run()
+
+    def test_sudo_run(self):
+        config = self.get_config('minion', from_scratch=True)
+        config['use_sudo'] = True
+        with patch.dict(cmdmod.__salt__, {'config.get': Mock(return_value=True)}):
+            self._run()
 
     @patch('pwd.getpwnam')
     @patch('subprocess.Popen')
