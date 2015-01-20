@@ -30,7 +30,7 @@ class CMDModuleTest(integration.ModuleCase):
     '''
     Validate the cmd module
     '''
-    def test_run(self):
+    def _run(self):
         '''
         cmd.run
         '''
@@ -44,6 +44,29 @@ class CMDModuleTest(integration.ModuleCase):
             self.run_function('cmd.run',
                               ['echo $SHELL',
                                'shell={0}'.format(shell)], python_shell=True).rstrip(), shell)
+
+    def test_run(self):
+        self._run()
+
+    def test_sudo_run(self):
+        # THE IDEA HERE IS TO RE-RUN THE ENTIRE TEST SUITE WITH
+        # SUDO TURNED ON TO VERIFY SUDO *AND* EXISTING FUNCTIONALITY
+        # WITHOUT DUPLICATING THE ENTIRE TEST SUITE.
+
+        # WHAT IS THE RIGHT APPROACH TO MODIFY THE MINION CONFIG AT RUNTIME?
+
+        # sudo_config is here for example simplicity -- belongs in setUp()
+        sudo_config = self.get_config('minion', from_scratch=True)
+        sudo_config['use_sudo'] = True		# Default: False
+
+        self._run()		# THIS PRINTS "*** "use_sudo" evaluated to True/False ***"
+                        # IF "use_sudo" IS TRUE THEN THE MINION CONFIG WAS
+                        # SUCCESSFULLY CHANGED.
+        # NOTE: The test doesn't actually fail.
+        #       You have to look at stdout to know it didn't work.
+        # TO RUN THIS TEST: # ./tests/runtests.py -n integration.modules.cmdmod.CMDModuleTest.test_sudo_run
+        # TEST FAILURE OUTPUT: https://gist.github.com/Vye/7d4f5ba3b7b43977d770
+            
 
     @patch('pwd.getpwnam')
     @patch('subprocess.Popen')

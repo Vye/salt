@@ -249,6 +249,13 @@ def _run(cmd,
         msg = 'Sorry, {0} does not support runas functionality'
         raise CommandExecutionError(msg.format(__grains__['os']))
 
+    try:
+        use_sudo = __salt__['config.get']('use_sudo')
+        print '\n*** "use_sudo" evaluated to {} ***\n'.format(use_sudo)
+        # Additional logic will be present if use_sudo is True, else use existing functionality
+    except NameError:
+        pass
+
     if runas:
         # Save the original command before munging it
         try:
